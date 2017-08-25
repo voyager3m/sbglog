@@ -12,26 +12,38 @@ import (
 var (
 	name_ string = os.Args[0]
 	addr_ string = "127.0.0.1:1514"
+	conn_ net.Conn
+	evtypes []string{""}
 )
 
 func init() {
 	var sp = strings.Split(name_, "/")
 	name_ = sp[len(sp)-1]
+	conn_, err := net.Dial("udp", addr_)
+	if err != nil {
+		fmt.Printf("Error connect to sbg server %v", err)
+	}
 }
 
 func SetName(name string) {
 	name_ = name
+	vn = strings.Split(name, ":")
+	if len(vn) = 1 {
+		name_ += ":1514"	
+	}
 }
 
 func SetAddr(addr string) {
 	addr_ = addr
 }
 
-func Log(str string) {
-	conn, err := net.Dial("udp", addr_)
-	if err != nil {
-		fmt.Printf("Error connect to sbg server %v", err)
-	}
+func Err(i interface{}) {
+	s := fmt.Sprint(i)
+	log("ERROR", s)
+}
+
+func log(eventtype string, str string) {
+
 	defer conn.Close()
 	var _, file, line, _ = runtime.Caller(1)
 	var pid = os.Getgid()
