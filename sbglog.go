@@ -61,12 +61,12 @@ func UseGorutine(use bool) {
 	usegorutine_ = use
 }
 
-func SetName(name string) {
-	name_ = name
-}
-
 func Wait() {
 	wg_.Wait()
+}
+
+func SetName(name string) {
+	name_ = name
 }
 
 func SetAddr(addr string) {
@@ -142,7 +142,7 @@ func Warning(i interface{}) {
 
 func Note(i interface{}) {
 	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(2)
+	var _, file, line, _ = runtime.Caller(1)
 	if usegorutine_ {
 		wg_.Add(1)
 		go vlog(5, file, line, s)
@@ -153,7 +153,7 @@ func Note(i interface{}) {
 
 func Info(i interface{}) {
 	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(2)
+	var _, file, line, _ = runtime.Caller(1)
 	if usegorutine_ {
 		wg_.Add(1)
 		go vlog(6, file, line, s)
@@ -164,7 +164,7 @@ func Info(i interface{}) {
 
 func Debug(i interface{}) {
 	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(2)
+	var _, file, line, _ = runtime.Caller(1)
 	if usegorutine_ {
 		wg_.Add(1)
 		go vlog(7, file, line, s)
