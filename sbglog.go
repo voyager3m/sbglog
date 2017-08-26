@@ -69,6 +69,7 @@ func SetName(name string) {
 	name_ = name
 }
 
+// SetAddr set url to sbglog server
 func SetAddr(addr string) {
 	addr_ = addr
 	vn := strings.Split(addr, ":")
