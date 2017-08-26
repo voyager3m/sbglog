@@ -7,8 +7,7 @@ package for sbglog server
 print messages to console
 
 ## UseSyslog(addr string)
-print messages to syslog
-example __sbglog.UseSyslog("localhost:514")__
+print messages to syslog. for example __sbglog.UseSyslog("localhost:514")__
 
 ## UseGorutine(use bool)
 use gorutine for sending messages
@@ -20,8 +19,7 @@ wait for gorutines
 set log name (tag for syslog)
 
 ## SetAddr(addr string)
-addr for sbglog server
-example __sbglog.SetAddr("192.168.0.1:1514")__
+addr for sbglog server. for example __sbglog.SetAddr("192.168.0.1:1514")__
 
 ## send log messages
 * Emergency(i interface{})
