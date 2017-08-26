@@ -3,6 +3,7 @@ package sbglog
 
 import (
 	"fmt"
+	"log/syslog"
 	"net"
 	"os"
 	"runtime"
@@ -20,6 +21,7 @@ var (
 	usegorutine_ bool = false
 	consoleout_  bool = false
 	syslogout_   bool = false
+	syslog_      *syslog.Writer
 	wg_          sync.WaitGroup
 )
 
@@ -30,15 +32,29 @@ func init() {
 	conn_, err = net.Dial("udp", addr_)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error connect to sbg server %v", err)
+
 	}
 }
 
-func SetConsoleOut(out bool) {
+func UseConsole(out bool) {
 	consoleout_ = out
 }
 
-func SetSyslogOut(out bool) {
-	syslogout_ = out
+func UseSyslog(addr string) {
+	if syslogout_ {
+		syslog_.Close()
+	}
+	if len(addr) > 0 {
+		var err error
+		syslog_, err = syslog.Dial("udp", addr, syslog.LOG_DEBUG|syslog.LOG_USER, name_)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error dial syslog: %v", err)
+		}
+		syslogout_ = true
+	} else {
+		syslogout_ = false
+	}
+
 }
 
 func UseGorutine(use bool) {
@@ -72,9 +88,9 @@ func Emergency(i interface{}) {
 	var _, file, line, _ = runtime.Caller(1)
 	if usegorutine_ {
 		wg_.Add(1)
-		go log(0, file, line, s)
+		go vlog(0, file, line, s)
 	} else {
-		log(0, file, line, s)
+		vlog(0, file, line, s)
 	}
 
 }
@@ -84,9 +100,9 @@ func Alert(i interface{}) {
 	var _, file, line, _ = runtime.Caller(1)
 	if usegorutine_ {
 		wg_.Add(1)
-		go log(1, file, line, s)
+		go vlog(1, file, line, s)
 	} else {
-		log(1, file, line, s)
+		vlog(1, file, line, s)
 	}
 
 }
@@ -96,9 +112,9 @@ func Critical(i interface{}) {
 	var _, file, line, _ = runtime.Caller(1)
 	if usegorutine_ {
 		wg_.Add(1)
-		go log(2, file, line, s)
+		go vlog(2, file, line, s)
 	} else {
-		log(2, file, line, s)
+		vlog(2, file, line, s)
 	}
 }
 
@@ -107,9 +123,9 @@ func Error(i interface{}) {
 	var _, file, line, _ = runtime.Caller(1)
 	if usegorutine_ {
 		wg_.Add(1)
-		go log(3, file, line, s)
+		go vlog(3, file, line, s)
 	} else {
-		log(3, file, line, s)
+		vlog(3, file, line, s)
 	}
 }
 
@@ -118,9 +134,9 @@ func Warning(i interface{}) {
 	var _, file, line, _ = runtime.Caller(1)
 	if usegorutine_ {
 		wg_.Add(1)
-		go log(4, file, line, s)
+		go vlog(4, file, line, s)
 	} else {
-		log(4, file, line, s)
+		vlog(4, file, line, s)
 	}
 }
 
@@ -129,9 +145,9 @@ func Note(i interface{}) {
 	var _, file, line, _ = runtime.Caller(2)
 	if usegorutine_ {
 		wg_.Add(1)
-		go log(5, file, line, s)
+		go vlog(5, file, line, s)
 	} else {
-		log(5, file, line, s)
+		vlog(5, file, line, s)
 	}
 }
 
@@ -140,9 +156,9 @@ func Info(i interface{}) {
 	var _, file, line, _ = runtime.Caller(2)
 	if usegorutine_ {
 		wg_.Add(1)
-		go log(6, file, line, s)
+		go vlog(6, file, line, s)
 	} else {
-		log(6, file, line, s)
+		vlog(6, file, line, s)
 	}
 }
 
@@ -151,14 +167,14 @@ func Debug(i interface{}) {
 	var _, file, line, _ = runtime.Caller(2)
 	if usegorutine_ {
 		wg_.Add(1)
-		go log(7, file, line, s)
+		go vlog(7, file, line, s)
 	} else {
-		log(7, file, line, s)
+		vlog(7, file, line, s)
 	}
 }
 
-func log(eventtype int, file string, line int, str string) {
-	var pid = syscall.Getpid() //os.Getgid()
+func vlog(eventtype int, file string, line int, str string) {
+	var pid = syscall.Getpid()
 	var sf = strings.Split(file, "/")
 	file = sf[len(sf)-1]
 	t := time.Now().UTC()
@@ -170,7 +186,24 @@ func log(eventtype int, file string, line int, str string) {
 		fmt.Fprintf(os.Stderr, "%s\n", fmtstr)
 	}
 	if syslogout_ {
-
+		switch eventtype {
+		case 0:
+			syslog_.Emerg(fmtstr)
+		case 1:
+			syslog_.Alert(fmtstr)
+		case 2:
+			syslog_.Crit(fmtstr)
+		case 3:
+			syslog_.Err(fmtstr)
+		case 4:
+			syslog_.Warning(fmtstr)
+		case 5:
+			syslog_.Notice(fmtstr)
+		case 6:
+			syslog_.Info(fmtstr)
+		case 7:
+			syslog_.Debug(fmtstr)
+		}
 	}
 	if usegorutine_ {
 		wg_.Done()
