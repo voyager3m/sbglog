@@ -174,6 +174,19 @@ func Debug(i interface{}) {
 	}
 }
 
+func Check(err error) {
+	if err != nil {
+		s := fmt.Sprintf("check %v", err)
+		var _, file, line, _ = runtime.Caller(1)
+		if usegorutine_ {
+			wg_.Add(1)
+			go vlog(3, file, line, s)
+		} else {
+			vlog(3, file, line, s)
+		}
+	}
+}
+
 func vlog(eventtype int, file string, line int, str string) {
 	var pid = syscall.Getpid()
 	var sf = strings.Split(file, "/")
