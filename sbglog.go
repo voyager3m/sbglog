@@ -174,7 +174,7 @@ func Debug(i interface{}) {
 	}
 }
 
-func Check(err error) {
+func Check(err error) bool {
 	if err != nil {
 		s := fmt.Sprintf("check %v", err)
 		var _, file, line, _ = runtime.Caller(1)
@@ -184,7 +184,9 @@ func Check(err error) {
 		} else {
 			vlog(3, file, line, s)
 		}
+		return false
 	}
+	return true
 }
 
 func vlog(eventtype int, file string, line int, str string) {
