@@ -62,7 +62,9 @@ func UseGorutine(use bool) {
 }
 
 func Wait() {
-	wg_.Wait()
+	if usegorutine_ {
+		wg_.Wait()
+	}
 }
 
 func SetName(name string) {
