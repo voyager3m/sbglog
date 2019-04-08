@@ -13,15 +13,15 @@ import (
 )
 
 var (
-	name_        string = os.Args[0]
-	addr_        string = "127.0.0.1:1514"
-	conn_        net.Conn
-	errtypes          = []string{"EMERG", "ALERT", "CRITCL", "ERROR", "WARNG", "NOTE", "INFO", "DEBUG"}
-	consoleout_  bool = false
-	syslogout_   bool = false
-	syslog_      *syslog.Writer
-	loglevel_    int = 7
-	pid_         int
+	name_       string = os.Args[0]
+	addr_       string = "127.0.0.1:1514"
+	conn_       net.Conn
+	errtypes         = []string{"EMERG", "ALERT", "CRITCL", "ERROR", "WARNG", "NOTE", "INFO", "DEBUG"}
+	consoleout_ bool = false
+	syslogout_  bool = false
+	syslog_     *syslog.Writer
+	loglevel_   int = 7
+	pid_        int
 )
 
 func init() {
@@ -82,106 +82,140 @@ func SetLogLevel(level int) {
 }
 
 func Emergency(i interface{}) {
-	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(1)
-	go vlog(0, file, line, s)
+	if loglevel_ >= 0 {
+		s := fmt.Sprint(i)
+		var _, file, line, _ = runtime.Caller(1)
+		go vlog(0, file, line, s)
+	}
 }
 
 func EmergencyWait(i interface{}) {
-	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(1)
-	vlog(0, file, line, s)
+	if loglevel_ >= 0 {
+		s := fmt.Sprint(i)
+		var _, file, line, _ = runtime.Caller(1)
+		vlog(0, file, line, s)
+	}
 }
 
 func Alert(i interface{}) {
-	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(1)
-	go vlog(1, file, line, s)
+	if loglevel_ >= 1 {
+		s := fmt.Sprint(i)
+		var _, file, line, _ = runtime.Caller(1)
+		go vlog(1, file, line, s)
+	}
 }
 
 func AlertWait(i interface{}) {
-	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(1)
-	vlog(1, file, line, s)
+	if loglevel_ >= 1 {
+		s := fmt.Sprint(i)
+		var _, file, line, _ = runtime.Caller(1)
+		vlog(1, file, line, s)
+	}
 }
 
 func Critical(i interface{}) {
-	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(1)
-	go vlog(2, file, line, s)
+	if loglevel_ >= 2 {
+		s := fmt.Sprint(i)
+		var _, file, line, _ = runtime.Caller(1)
+		go vlog(2, file, line, s)
+	}
 }
 
 func CriticalWait(i interface{}) {
-	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(1)
-	vlog(2, file, line, s)
+	if loglevel_ >= 2 {
+		s := fmt.Sprint(i)
+		var _, file, line, _ = runtime.Caller(1)
+		vlog(2, file, line, s)
+	}
 }
 
 func Error(i interface{}) {
-	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(1)
-	go vlog(3, file, line, s)
+	if loglevel_ >= 3 {
+		s := fmt.Sprint(i)
+		var _, file, line, _ = runtime.Caller(1)
+		go vlog(3, file, line, s)
+	}
 }
 
 func ErrorWait(i interface{}) {
-	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(1)
-	vlog(3, file, line, s)
+	if loglevel_ >= 3 {
+		s := fmt.Sprint(i)
+		var _, file, line, _ = runtime.Caller(1)
+		vlog(3, file, line, s)
+	}
 }
 
 func Warning(i interface{}) {
-	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(1)
-	go vlog(4, file, line, s)
+	if loglevel_ >= 4 {
+		s := fmt.Sprint(i)
+		var _, file, line, _ = runtime.Caller(1)
+		go vlog(4, file, line, s)
+	}
 }
 
 func WarningWait(i interface{}) {
-	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(1)
-	vlog(4, file, line, s)
+	if loglevel_ >= 4 {
+		s := fmt.Sprint(i)
+		var _, file, line, _ = runtime.Caller(1)
+		vlog(4, file, line, s)
+	}
 }
 
 func Note(i interface{}) {
-	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(1)
-	go vlog(5, file, line, s)
+	if loglevel_ >= 5 {
+		s := fmt.Sprint(i)
+		var _, file, line, _ = runtime.Caller(1)
+		go vlog(5, file, line, s)
+	}
 }
 
 func NoteWait(i interface{}) {
-	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(1)
-	vlog(5, file, line, s)
+	if loglevel_ >= 5 {
+		s := fmt.Sprint(i)
+		var _, file, line, _ = runtime.Caller(1)
+		vlog(5, file, line, s)
+	}
 }
 
 func Info(i interface{}) {
-	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(1)
-	go vlog(6, file, line, s)
+	if loglevel_ >= 6 {
+		s := fmt.Sprint(i)
+		var _, file, line, _ = runtime.Caller(1)
+		go vlog(6, file, line, s)
+	}
 }
 
 func InfoWait(i interface{}) {
-	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(1)
-	vlog(6, file, line, s)
+	if loglevel_ >= 6 {
+		s := fmt.Sprint(i)
+		var _, file, line, _ = runtime.Caller(1)
+		vlog(6, file, line, s)
+	}
 }
 
 func Debug(i interface{}) {
-	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(1)
-	go vlog(7, file, line, s)
+	if loglevel_ >= 7 {
+		s := fmt.Sprint(i)
+		var _, file, line, _ = runtime.Caller(1)
+		go vlog(7, file, line, s)
+	}
 }
 
 func DebugWait(i interface{}) {
-	s := fmt.Sprint(i)
-	var _, file, line, _ = runtime.Caller(1)
-	vlog(7, file, line, s)
+	if loglevel_ >= 0 {
+		s := fmt.Sprint(i)
+		var _, file, line, _ = runtime.Caller(1)
+		vlog(7, file, line, s)
+	}
 }
 
 func Check(err error) bool {
 	if err != nil {
-		s := fmt.Sprintf("check %v", err)
-		var _, file, line, _ = runtime.Caller(1)
-		vlog(3, file, line, s)
+		if loglevel_ >= 3 {
+			var _, file, line, _ = runtime.Caller(1)
+			s := fmt.Sprintf("check: %+v", err)
+			vlog(3, file, line, s)
+		}
 		return false
 	}
 	return true
