@@ -17,7 +17,6 @@ var (
 	addr_        string = "127.0.0.1:1514"
 	conn_        net.Conn
 	errtypes          = []string{"EMERG", "ALERT", "CRITCL", "ERROR", "WARNG", "NOTE", "INFO", "DEBUG"}
-	usegorutine_ bool = false
 	consoleout_  bool = false
 	syslogout_   bool = false
 	syslog_      *syslog.Writer
