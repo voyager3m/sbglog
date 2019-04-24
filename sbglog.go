@@ -66,20 +66,22 @@ func SetName(name string) {
 // SetAddr set url to sbglog server
 func SetAddr(addr string) {
 	addr_ = addr
-	vn := strings.Split(addr, ":")
-	if len(vn) == 1 {
-		addr_ += ":1514"
-	}
 	if connected_ {
 		conn_.Close()
 	}
-	var err error
-	conn_, err = net.Dial("udp", addr_)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error connect to sbg server %v", err)
-		connected_ = false
-	} else {
-		connected_ = true
+	connected_ = false
+	if len(addr_) > 0 {
+		vn := strings.Split(addr, ":")
+		if len(vn) == 1 {
+			addr_ += ":1514"
+		}
+		var err error
+		conn_, err = net.Dial("udp", addr_)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error connect to sbg server %v", err)
+		} else {
+			connected_ = true
+		}
 	}
 }
 
