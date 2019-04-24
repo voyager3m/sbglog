@@ -15,8 +15,9 @@ import (
 
 var (
 	name_       string = os.Args[0]
-	addr_       string = "127.0.0.1:1514"
+	addr_       string //= "127.0.0.1:1514"
 	conn_       net.Conn
+	connected_  bool = false
 	errtypes         = []string{"EMERG", "ALERT", "CRITCL", "ERROR", "WARNG", "NOTE", "INFO", "DEBUG"}
 	consoleout_ bool = true
 	syslogout_  bool = false
@@ -28,12 +29,12 @@ var (
 func init() {
 	var sp = strings.Split(name_, "/")
 	name_ = sp[len(sp)-1]
-	var err error
-	conn_, err = net.Dial("udp", addr_)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error connect to sbg server %v", err)
+	// var err error
+	// conn_, err = net.Dial("udp", addr_)
+	// if err != nil {
+	// 	fmt.Fprintf(os.Stderr, "Error connect to sbg server %v", err)
 
-	}
+	// }
 	pid_ = syscall.Getpid()
 }
 
@@ -69,11 +70,16 @@ func SetAddr(addr string) {
 	if len(vn) == 1 {
 		addr_ += ":1514"
 	}
-	conn_.Close()
+	if connected_ {
+		conn_.Close()
+	}
 	var err error
 	conn_, err = net.Dial("udp", addr_)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error connect to sbg server %v", err)
+		connected_ = false
+	} else {
+		connected_ = true
 	}
 }
 
@@ -276,12 +282,17 @@ func Check(err error) bool {
 
 func vlog(eventtype int, file string, line int, str string) {
 	//conlog(eventtype, file, line, str)
+	if !connected_ && !syslogout_ {
+		return
+	}
 	var sf = strings.Split(file, "/")
 	file = sf[len(sf)-1]
 	t := time.Now().UTC()
 	strt := t.Format("Jan 2 15:04:05 2006")
 	var fmtstr = fmt.Sprintf("<%d>%.15s %s[%d]: %s:%d %s: %s", eventtype, strt, name_, pid_, file, line, errtypes[eventtype], str)
-	fmt.Fprintf(conn_, fmtstr)
+	if connected_ {
+		fmt.Fprintf(conn_, fmtstr)
+	}
 	if syslogout_ {
 		switch eventtype {
 		case 0:
