@@ -275,6 +275,7 @@ func Check(err error) bool {
 		if loglevel_ >= 3 {
 			var _, file, line, _ = runtime.Caller(1)
 			s := fmt.Sprintf("CHECK: %+v", err)
+			conlog(3, file, line, s)
 			vlog(3, file, line, s)
 		}
 		return false
